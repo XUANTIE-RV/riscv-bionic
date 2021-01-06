@@ -37,7 +37,7 @@
 // consequent refactoring steps.
 
 // Android uses RELA for aarch64 and x86_64. mips64 still uses REL.
-#if defined(__aarch64__) || defined(__x86_64__)
+#if defined(__aarch64__) || defined(__x86_64__) || __riscv_xlen == 64
 #define USE_RELA 1
 #endif
 

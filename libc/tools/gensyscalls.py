@@ -18,7 +18,7 @@ import sys
 import tempfile
 
 
-all_arches = [ "arm", "arm64", "mips", "mips64", "x86", "x86_64" ]
+all_arches = [ "arm", "arm64", "mips", "mips64", "riscv64", "x86", "x86_64" ]
 
 
 # temp directory where we store all intermediate files
@@ -162,6 +162,23 @@ mips64_call = syscall_stub_header + """\
 END(%(func)s)
 """
 
+#
+# RISC-V64 assembler templates for each syscall stub
+#
+
+riscv64_call = syscall_stub_header + """\
+    li      a7, %(__NR_name)s
+    scall
+
+    li      a7, -MAX_ERRNO
+    bgtu    a0, a7, 1f;
+
+    ret
+1:
+    neg     a0, a0
+    j       __set_errno_internal
+END(%(func)s)
+"""
 
 #
 # x86 assembler templates for each syscall stub
@@ -320,6 +337,8 @@ def mips_genstub(syscall):
 def mips64_genstub(syscall):
     return mips64_call % syscall
 
+def riscv64_genstub(syscall):
+    return riscv64_call % syscall
 
 def x86_genstub(syscall):
     result     = syscall_stub_header % syscall
@@ -561,6 +580,9 @@ class State:
             if syscall.has_key("mips64"):
                 syscall["asm-mips64"] = add_footer(64, mips64_genstub(syscall), syscall)
 
+            if syscall.has_key("riscv64"):
+                syscall["asm-riscv64"] = add_footer(64, riscv64_genstub(syscall), syscall)
+
             if syscall.has_key("x86_64"):
                 syscall["asm-x86_64"] = add_footer(64, x86_64_genstub(syscall), syscall)
 
@@ -590,6 +612,7 @@ class State:
                          "kernel/uapi/asm-mips/asm/unistd_nr_n64.h",
                          "kernel/uapi/asm-mips/asm/unistd_nr_o32.h",
                          "kernel/uapi/asm-mips/asm/unistd_o32.h",
+                         "kernel/uapi/asm-riscv/asm/unistd.h",
                          "kernel/uapi/asm-x86/asm/unistd_32.h",
                          "kernel/uapi/asm-x86/asm/unistd_64.h",
                          "kernel/uapi/asm-x86/asm/unistd_x32.h"]:

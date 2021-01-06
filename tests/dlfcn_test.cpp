@@ -995,6 +995,8 @@ TEST(dlfcn, dlopen_executable_by_absolute_path) {
 #else
 #define ALTERNATE_PATH_TO_SYSTEM_LIB "/system/lib/mips/"
 #endif
+#elif __riscv_xlen == 64
+#define ALTERNATE_PATH_TO_SYSTEM_LIB "/system/lib/riscv64/"
 #else
 #error "Unknown architecture"
 #endif

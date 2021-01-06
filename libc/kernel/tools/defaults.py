@@ -6,7 +6,7 @@ import time, os, sys
 from utils import *
 
 # the list of supported architectures
-kernel_archs = [ 'arm', 'arm64', 'mips', 'x86' ]
+kernel_archs = [ 'arm', 'arm64', 'mips', 'riscv', 'x86' ]
 
 # the list of include directories that belong to the kernel
 # tree. used when looking for sources...
@@ -46,6 +46,7 @@ kernel_default_arch_macros = {
              "CONFIG_32BIT": "_ABIO32",
              "CONFIG_CPU_LITTLE_ENDIAN": "1",
              "__SANE_USERSPACE_TYPES__": "1",},
+    "riscv": {},
     "x86": {},
     }
 
@@ -53,6 +54,7 @@ kernel_arch_token_replacements = {
     "arm": {},
     "arm64": {},
     "mips": {"off_t":"__kernel_off_t"},
+    "riscv": {},
     "x86": {},
     }
 

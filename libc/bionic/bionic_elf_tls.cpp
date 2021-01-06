@@ -135,7 +135,13 @@ size_t StaticTlsLayout::reserve_exe_segment_and_tcb(const TlsSegment* exe_segmen
   const size_t max_align = MAX(alignof(bionic_tcb), exe_segment->alignment);
   offset_bionic_tcb_ = reserve(sizeof(bionic_tcb), max_align);
   return offset_bionic_tcb_ - exe_size;
+#elif __riscv_xlen == 64
 
+  const size_t exe_size = round_up_with_overflow_check(exe_segment->size, exe_segment->alignment);
+  reserve(exe_size, 1);
+  const size_t max_align = MAX(alignof(bionic_tcb), exe_segment->alignment);
+  offset_bionic_tcb_ = reserve(sizeof(bionic_tcb), max_align);
+  return offset_bionic_tcb_ - exe_size;
 #else
 #error "Unrecognized architecture"
 #endif

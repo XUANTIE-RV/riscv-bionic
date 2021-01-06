@@ -39,7 +39,7 @@ __BEGIN_DECLS
 typedef struct { int __val[2]; } __fsid_t;
 typedef __fsid_t fsid_t;
 
-#if defined(__aarch64__) || defined(__x86_64__)
+#if defined(__aarch64__) || __riscv_xlen == 64 || defined(__x86_64__)
 #define __STATFS64_BODY \
   uint64_t f_type; \
   uint64_t f_bsize; \

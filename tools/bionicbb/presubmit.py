@@ -178,6 +178,8 @@ def handle_comment(gerrit_info, body, dry_run):
                                       lunch_target='aosp_mips-eng'),
         'mips64': lambda: build_project(gerrit_info, dry_run,
                                         lunch_target='aosp_mips64-eng'),
+        'riscv64': lambda: build_project(gerrit_info, dry_run,
+                                        lunch_target='aosp_riscv64-eng'),
         'x86': lambda: build_project(gerrit_info, dry_run,
                                      lunch_target='aosp_x86-eng'),
         'x86_64': lambda: build_project(gerrit_info, dry_run,

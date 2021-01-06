@@ -162,6 +162,7 @@ class Visitor : public RecursiveASTVisitor<Visitor> {
           { "obsoleted_in", { &global_availability.obsoleted } },
           { "introduced_in_arm", { &arch_availability[Arch::arm].introduced } },
           { "introduced_in_mips", { &arch_availability[Arch::mips].introduced } },
+          { "introduced_in_riscv", { &arch_availability[Arch::riscv32].introduced } },
           { "introduced_in_x86", { &arch_availability[Arch::x86].introduced } },
           { "introduced_in_32",
             { &arch_availability[Arch::arm].introduced,
@@ -170,6 +171,7 @@ class Visitor : public RecursiveASTVisitor<Visitor> {
           { "introduced_in_64",
             { &arch_availability[Arch::arm64].introduced,
               &arch_availability[Arch::mips64].introduced,
+              &arch_availability[Arch::riscv64].introduced,
               &arch_availability[Arch::x86_64].introduced } },
         };
 

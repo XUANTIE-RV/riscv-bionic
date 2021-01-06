@@ -101,6 +101,9 @@ cc_library_static {
         arm64: {
             srcs: ["arch-arm64/bionic/__set_tls.c"],
         },
+        riscv64: {
+            srcs: ["arch-riscv64/bionic/__set_tls.c"],
+        },
         x86: {
             srcs: [
                 "arch-x86/bionic/__libc_init_sysinfo.cpp",
@@ -887,6 +890,23 @@ cc_library_static {
             ],
         },
 
+        riscv64: {
+            srcs: [
+                "arch-riscv64/generic/bionic/memcmp.c",
+                "arch-riscv64/generic/bionic/strnlen.c",
+                "arch-riscv64/generic/bionic/strchr.c",
+                "arch-riscv64/generic/bionic/strcmp.c",
+                "arch-riscv64/generic/bionic/strlen.c",
+                "arch-riscv64/generic/bionic/memset.c",
+                "arch-riscv64/generic/bionic/memcpy.c",
+                "arch-riscv64/bionic/__bionic_clone.S",
+                "arch-riscv64/bionic/_exit_with_stack_teardown.S",
+                "arch-riscv64/bionic/setjmp.S",
+                "arch-riscv64/bionic/syscall.S",
+                "arch-riscv64/bionic/vfork.S",
+            ],
+        },
+
         x86: {
             srcs: [
                 "arch-x86/generic/string/memcmp.S",
@@ -1258,6 +1278,9 @@ cc_library_static {
         mips64: {
             srcs: ["arch-mips64/syscalls/**/*.S"],
         },
+        riscv64: {
+            srcs: ["arch-riscv64/syscalls/**/*.S"],
+        },
         x86: {
             srcs: ["arch-x86/syscalls/**/*.S"],
         },
@@ -1603,6 +1626,9 @@ cc_library {
         arm64: {
             version_script: ":libc.arm64.map",
         },
+        riscv64: {
+            version_script: ":libc.riscv64.map",
+        },
         x86: {
             // TODO: This is to work around b/24465209. Remove after root cause is fixed.
             pack_relocations: false,
@@ -1637,6 +1663,14 @@ genrule {
     srcs: ["libc.map.txt"],
     tool_files: [":bionic-generate-version-script"],
     cmd: "$(location :bionic-generate-version-script) arm64 $(in) $(out)",
+}
+
+genrule {
+    name: "libc.riscv64.map",
+    out: ["libc.riscv64.map"],
+    srcs: ["libc.map.txt"],
+    tool_files: [":bionic-generate-version-script"],
+    cmd: "$(location :bionic-generate-version-script) riscv64 $(in) $(out)",
 }
 
 genrule {
@@ -1695,6 +1729,11 @@ cc_library_headers {
                 "kernel/uapi/asm-mips",
             ],
         },
+        riscv64: {
+            export_include_dirs: [
+                "kernel/uapi/asm-riscv",
+            ],
+        },
         x86: {
             export_include_dirs: [
                 "kernel/uapi/asm-x86",
@@ -1742,6 +1781,9 @@ cc_library {
         arm64: {
             version_script: ":libstdc++.arm64.map",
         },
+        riscv64: {
+            version_script: ":libstdc++.riscv64.map",
+        },
         x86: {
             pack_relocations: false,
             ldflags: ["-Wl,--hash-style=both"],
@@ -1767,6 +1809,14 @@ genrule {
     srcs: ["libstdc++.map.txt"],
     tool_files: [":bionic-generate-version-script"],
     cmd: "$(location :bionic-generate-version-script) arm64 $(in) $(out)",
+}
+
+genrule {
+    name: "libstdc++.riscv64.map",
+    out: ["libstdc++.riscv64.map"],
+    srcs: ["libstdc++.map.txt"],
+    tool_files: [":bionic-generate-version-script"],
+    cmd: "$(location :bionic-generate-version-script) riscv64 $(in) $(out)",
 }
 
 genrule {
@@ -2035,6 +2085,14 @@ ndk_headers {
 }
 
 ndk_headers {
+    name: "libc_asm_riscv64",
+    from: "kernel/uapi/asm-riscv",
+    to: "riscv64-linux-android",
+    srcs: ["kernel/uapi/asm-riscv/**/*.h"],
+    license: "NOTICE",
+}
+
+ndk_headers {
     name: "libc_asm_x86",
     from: "kernel/uapi/asm-x86",
     to: "i686-linux-android",
@@ -2084,6 +2142,11 @@ llndk_library {
         mips64: {
             export_include_dirs: [
                 "kernel/uapi/asm-mips",
+            ],
+        },
+        riscv64: {
+            export_include_dirs: [
+                "kernel/uapi/asm-riscv",
             ],
         },
         x86: {
@@ -2146,6 +2209,16 @@ cc_object {
         "kernel/uapi/asm-arm64",
         "kernel/uapi",
     ],
+}
+
+cc_object {
+    name: "libseccomp_gen_syscall_nrs_riscv64",
+    defaults: ["libseccomp_gen_syscall_nrs_defaults"],
+    local_include_dirs: [
+        "kernel/uapi/asm-riscv",
+        "kernel/uapi",
+    ],
+    cflags: ["-D__SIZEOF_POINTER__=8", "-D__LP64__"]
 }
 
 cc_object {
@@ -2256,6 +2329,7 @@ cc_genrule {
         ":libseccomp_gen_syscall_nrs_arm64",
         ":libseccomp_gen_syscall_nrs_mips",
         ":libseccomp_gen_syscall_nrs_mips64",
+        ":libseccomp_gen_syscall_nrs_riscv64",
         ":libseccomp_gen_syscall_nrs_x86",
         ":libseccomp_gen_syscall_nrs_x86_64",
     ],
@@ -2290,6 +2364,7 @@ cc_genrule {
         ":libseccomp_gen_syscall_nrs_arm64",
         ":libseccomp_gen_syscall_nrs_mips",
         ":libseccomp_gen_syscall_nrs_mips64",
+        ":libseccomp_gen_syscall_nrs_riscv64",
         ":libseccomp_gen_syscall_nrs_x86",
         ":libseccomp_gen_syscall_nrs_x86_64",
     ],
@@ -2299,6 +2374,7 @@ cc_genrule {
         "arm_app_zygote_policy.cpp",
         "mips64_app_zygote_policy.cpp",
         "mips_app_zygote_policy.cpp",
+        "riscv64_app_zygote_policy.cpp",
         "x86_64_app_zygote_policy.cpp",
         "x86_app_zygote_policy.cpp",
     ],
@@ -2321,6 +2397,7 @@ cc_genrule {
         ":libseccomp_gen_syscall_nrs_arm64",
         ":libseccomp_gen_syscall_nrs_mips",
         ":libseccomp_gen_syscall_nrs_mips64",
+        ":libseccomp_gen_syscall_nrs_riscv64",
         ":libseccomp_gen_syscall_nrs_x86",
         ":libseccomp_gen_syscall_nrs_x86_64",
     ],
@@ -2330,6 +2407,7 @@ cc_genrule {
         "arm_app_policy.cpp",
         "mips64_app_policy.cpp",
         "mips_app_policy.cpp",
+        "riscv64_app_policy.cpp",
         "x86_64_app_policy.cpp",
         "x86_app_policy.cpp",
     ],
@@ -2351,6 +2429,7 @@ cc_genrule {
         ":libseccomp_gen_syscall_nrs_arm64",
         ":libseccomp_gen_syscall_nrs_mips",
         ":libseccomp_gen_syscall_nrs_mips64",
+        ":libseccomp_gen_syscall_nrs_riscv64",
         ":libseccomp_gen_syscall_nrs_x86",
         ":libseccomp_gen_syscall_nrs_x86_64",
     ],
@@ -2360,6 +2439,7 @@ cc_genrule {
         "arm_system_policy.cpp",
         "mips64_system_policy.cpp",
         "mips_system_policy.cpp",
+        "riscv64_system_policy.cpp",
         "x86_64_system_policy.cpp",
         "x86_system_policy.cpp",
     ],
@@ -2383,6 +2463,7 @@ cc_genrule {
         ":libseccomp_gen_syscall_nrs_arm64",
         ":libseccomp_gen_syscall_nrs_mips",
         ":libseccomp_gen_syscall_nrs_mips64",
+        ":libseccomp_gen_syscall_nrs_riscv64",
         ":libseccomp_gen_syscall_nrs_x86",
         ":libseccomp_gen_syscall_nrs_x86_64",
     ],
@@ -2392,6 +2473,7 @@ cc_genrule {
         "arm_global_policy.cpp",
         "mips64_global_policy.cpp",
         "mips_global_policy.cpp",
+        "riscv64_global_policy.cpp",
         "x86_64_global_policy.cpp",
         "x86_global_policy.cpp",
     ],
@@ -2455,6 +2537,9 @@ cc_library_shared {
         },
         arm64: {
             srcs: ["arch-arm64/syscalls/__rt_sigprocmask.S"],
+        },
+        riscv64: {
+            srcs: ["arch-riscv64/syscalls/__rt_sigprocmask.S"],
         },
         x86: {
             srcs: [

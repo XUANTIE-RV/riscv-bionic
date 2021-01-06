@@ -37,6 +37,8 @@
 #include <bits/fenv_x86.h>
 #elif defined(__mips__)
 #include <bits/fenv_mips.h>
+#elif __riscv_xlen == 64
+#include <bits/fenv_riscv64.h>
 #elif defined(__x86_64__)
 #include <bits/fenv_x86_64.h>
 #endif

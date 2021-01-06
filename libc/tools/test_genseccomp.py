@@ -26,7 +26,7 @@ class TestGenseccomp(unittest.TestCase):
   def test_get_names(self):
     bionic = cStringIO.StringIO(textwrap.dedent("""\
 int __llseek:_llseek(int, unsigned long, unsigned long, off64_t*, int) arm,mips,x86
-int         fchown:fchown(int, uid_t, gid_t)    arm64,mips,mips64,x86_64
+int         fchown:fchown(int, uid_t, gid_t)    arm64,mips,mips64,riscv64,x86_64
     """))
 
     whitelist = cStringIO.StringIO(textwrap.dedent("""\
@@ -54,7 +54,7 @@ ssize_t     read(int, void*, size_t)        all
 
     # Blacklist item must be in bionic
     blacklist = cStringIO.StringIO(textwrap.dedent("""\
-int         fchown2:fchown2(int, uid_t, gid_t)    arm64,mips,mips64,x86_64
+int         fchown2:fchown2(int, uid_t, gid_t)    arm64,mips,mips64,riscv64,x86_64
     """))
     with self.assertRaises(RuntimeError):
       genseccomp.get_names([bionic, whitelist, blacklist], "arm")
@@ -64,7 +64,7 @@ int         fchown2:fchown2(int, uid_t, gid_t)    arm64,mips,mips64,x86_64
 
     # Test blacklist item is removed
     blacklist = cStringIO.StringIO(textwrap.dedent("""\
-int         fchown:fchown(int, uid_t, gid_t)    arm64,mips,mips64,x86_64
+int         fchown:fchown(int, uid_t, gid_t)    arm64,mips,mips64,riscv64,x86_64
     """))
     names = genseccomp.get_names([bionic, whitelist, blacklist], "arm64")
     bionic.seek(0)
@@ -75,7 +75,7 @@ int         fchown:fchown(int, uid_t, gid_t)    arm64,mips,mips64,x86_64
 
     # Blacklist item must not be in whitelist
     whitelist = cStringIO.StringIO(textwrap.dedent("""\
-int         fchown:fchown(int, uid_t, gid_t)    arm64,mips,mips64,x86_64
+int         fchown:fchown(int, uid_t, gid_t)    arm64,mips,mips64,riscv64,x86_64
     """))
     with self.assertRaises(RuntimeError):
       genseccomp.get_names([empty, whitelist, blacklist], "arm")
@@ -125,8 +125,8 @@ int __llseek:_llseek(int, unsigned long, unsigned long, off64_t*, int) arm,mips,
                       [("openat", 4288)])
 
     self.assertEquals(genseccomp.convert_names_to_NRs(["openat"],
-                                                      self.get_headers("mips64"),
-                                                      self.get_switches("mips64")),
+                                                      self.get_headers("mips64,riscv64"),
+                                                      self.get_switches("mips64,riscv64")),
                       [("openat", 5247)])
 
 
@@ -193,7 +193,7 @@ int __llseek:_llseek(int, unsigned long, unsigned long, off64_t*, int) arm,mips,
   def test_construct_bpf(self):
     syscalls = cStringIO.StringIO(textwrap.dedent("""\
     int __llseek:_llseek(int, unsigned long, unsigned long, off64_t*, int) arm,mips,x86
-    int         fchown:fchown(int, uid_t, gid_t)    arm64,mips,mips64,x86_64
+    int         fchown:fchown(int, uid_t, gid_t)    arm64,mips,mips64,riscv64,x86_64
     """))
 
     whitelist = cStringIO.StringIO(textwrap.dedent("""\

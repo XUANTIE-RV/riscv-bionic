@@ -38,6 +38,9 @@ cc_library_shared {
         arm64: {
             whole_static_libs: ["libclang_rt.scudo_minimal-aarch64-android.static"],
         },
+        riscv64: {
+            whole_static_libs: ["libclang_rt.scudo_minimal-riscv64-android.static"],
+        },
         x86: {
             whole_static_libs: ["libclang_rt.scudo_minimal-i686-android.static"],
         },

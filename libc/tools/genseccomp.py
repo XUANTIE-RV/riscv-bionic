@@ -181,7 +181,7 @@ def construct_bpf(syscalls, architecture, name_modifier):
 
 
 def gen_policy(name_modifier, out_dir, base_syscall_file, syscall_files, syscall_NRs):
-  for arch in ('arm', 'arm64', 'mips', 'mips64', 'x86', 'x86_64'):
+  for arch in ('arm', 'arm64', 'mips', 'mips64', 'riscv64', 'x86', 'x86_64'):
     base_names = load_syscall_names_from_file(base_syscall_file, arch)
     whitelist_names = set()
     blacklist_names = set()

@@ -72,3 +72,12 @@ extern const struct sock_filter mips64_system_filter[];
 extern const size_t mips64_system_filter_size;
 extern const struct sock_filter mips64_global_filter[];
 extern const size_t mips64_global_filter_size;
+
+extern const struct sock_filter riscv64_app_filter[];
+extern const size_t riscv64_app_filter_size;
+extern const struct sock_filter riscv64_app_zygote_filter[];
+extern const size_t riscv64_app_zygote_filter_size;
+extern const struct sock_filter riscv64_system_filter[];
+extern const size_t riscv64_system_filter_size;
+extern const struct sock_filter riscv64_global_filter[];
+extern const size_t riscv64_global_filter_size;

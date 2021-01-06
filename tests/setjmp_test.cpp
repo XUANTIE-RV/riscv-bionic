@@ -228,6 +228,8 @@ TEST(setjmp, setjmp_fp_registers) {
 #define __JB_SIGFLAG 1
 #elif defined(__mips__)
 #define __JB_SIGFLAG 2
+#elif __riscv_xlen == 64
+#define __JB_SIGFLAG 0
 #endif
 
 TEST(setjmp, setjmp_cookie) {

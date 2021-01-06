@@ -42,6 +42,8 @@
                "rdhwr   %0,$29\n" \
                ".set    pop\n" : "=r"(__val)); \
        __val; })
+#elif __riscv_xlen == 64
+# define __get_tls() ({ void** __val; __asm__("mv %0, tp" : "=r"(__val)); __val; })
 #elif defined(__i386__)
 # define __get_tls() ({ void** __val; __asm__("movl %%gs:0, %0" : "=r"(__val)); __val; })
 #elif defined(__x86_64__)

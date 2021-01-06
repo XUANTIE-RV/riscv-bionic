@@ -385,6 +385,63 @@ typedef struct ucontext {
   struct _libc_fpstate __fpregs_mem;
 } ucontext_t;
 
+#elif __riscv_xlen == 64
+
+#define NGREG 32
+
+typedef unsigned long long greg_t;
+typedef greg_t gregset_t[NGREG];
+
+typedef unsigned long int __riscv_mc_gp_state[32];
+
+struct __riscv_mc_f_ext_state
+  {
+    unsigned int __f[32];
+    unsigned int __fcsr;
+  };
+
+struct __riscv_mc_d_ext_state
+  {
+    unsigned long long int __f[32];
+    unsigned int __fcsr;
+  };
+
+struct __riscv_mc_q_ext_state
+  {
+    unsigned long long int __f[64] __attribute__ ((__aligned__ (16)));
+    unsigned int __fcsr;
+    /* Reserved for expansion of sigcontext structure.  Currently zeroed
+       upon signal, and must be zero upon sigreturn.  */
+    unsigned int __glibc_reserved[3];
+  };
+
+union __riscv_mc_fp_state
+  {
+    struct __riscv_mc_f_ext_state __f;
+    struct __riscv_mc_d_ext_state __d;
+    struct __riscv_mc_q_ext_state __q;
+  };
+
+typedef union __riscv_mc_fp_state* fpregset_t;
+
+typedef struct mcontext_t
+  {
+    __riscv_mc_gp_state __gregs;
+    union  __riscv_mc_fp_state __fpregs;
+  } mcontext_t;
+
+/* Userlevel context.  */
+typedef struct ucontext_t
+  {
+    unsigned long int	__uc_flags;
+    struct ucontext_t	*uc_link;
+    stack_t		uc_stack;
+    sigset_t		uc_sigmask;
+    sigset64_t          uc_sigmask64;
+    unsigned char	__reserved[1024 / 8 - sizeof (sigset_t)];
+    mcontext_t		uc_mcontext;
+  } ucontext_t;
+
 #endif
 
 __END_DECLS

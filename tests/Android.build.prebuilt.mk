@@ -23,6 +23,7 @@ LOCAL_MODULE_CLASS := EXECUTABLES
 
 LOCAL_SRC_FILES_arm := prebuilt-elf-files/arm/$(bionic_tests_module)
 LOCAL_SRC_FILES_arm64 := prebuilt-elf-files/arm64/$(bionic_tests_module)
+LOCAL_SRC_FILES_riscv64 := prebuilt-elf-files/riscv64/$(bionic_tests_module)
 LOCAL_SRC_FILES_x86 := prebuilt-elf-files/x86/$(bionic_tests_module)
 LOCAL_SRC_FILES_x86_64 := prebuilt-elf-files/x86_64/$(bionic_tests_module)
 LOCAL_SRC_FILES_mips := prebuilt-elf-files/mips/$(bionic_tests_module)
